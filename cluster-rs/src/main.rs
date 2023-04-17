@@ -22,7 +22,11 @@ fn get_node_type(purpose: &str) -> &str {
         "memory" => "Standard_DS12_v2",
         "storage" => "Standard_L8s_v2",
         "compute" => "Standard_F4",
-        _ => "Standard_DS3_v2", // default to general
+        // default to error and exit program
+        _ => {
+            println!("Invalid purpose. Please choose from general, memory, storage, or compute.");
+            std::process::exit(1);
+        }
     }
 }
 
@@ -72,17 +76,20 @@ fn main() {
                 .about("Create a new cluster")
                 .arg(
                     Arg::with_name("name")
-                        .help("Name of the new cluster")
                         .required(true)
-                        .index(1),
+                        .takes_value(true)
+                        .long("--name")
+                        .short('n')
+                        .help("Name of the new cluster")
                 )
                 .arg(
                     Arg::with_name("optimize")
+                        .required(false)
+                        .takes_value(true)
+                        .long("--optimize")
                         .help("Optimize for a specific purpose")
                         .short('o')
-                        .required(false)
                         .default_value("general")
-                        .index(2),
                 ),
         )
         .subcommand(
@@ -92,7 +99,9 @@ fn main() {
                     Arg::with_name("cluster")
                         .help("ID of the cluster to delete")
                         .required(true)
-                        .index(1),
+                        .takes_value(true)
+                        .long("--cluster")
+                        .short('c')
                 ),
         )
         .subcommand(SubCommand::with_name("list").about("List all clusters"))
