@@ -1,8 +1,8 @@
 use clap::{App, Arg, SubCommand};
+use serde::Serialize;
 use std::fs::File;
 use std::io::prelude::*;
 use std::process::Command;
-use serde::{Serialize};
 
 #[derive(Serialize)]
 struct Cluster {
@@ -63,7 +63,6 @@ fn create_cluster(name: &str, purpose: &str) -> Result<(), Box<dyn std::error::E
 }
 
 fn main() {
-
     let matches = App::new("Cluster Management Tool")
         .version("1.0")
         .author("Alex Bzdel")
@@ -76,7 +75,6 @@ fn main() {
                         .help("Name of the new cluster")
                         .required(true)
                         .index(1),
-
                 )
                 .arg(
                     Arg::with_name("optimize")
@@ -85,31 +83,29 @@ fn main() {
                         .required(false)
                         .default_value("general")
                         .index(2),
-
                 ),
         )
         .subcommand(
             SubCommand::with_name("delete")
-            .about("Delete an existing cluster")
-            .arg(
-                Arg::with_name("cluster")
-                    .help("ID of the cluster to delete")
-                    .required(true)
-                    .index(1),
-            )
-    )
+                .about("Delete an existing cluster")
+                .arg(
+                    Arg::with_name("cluster")
+                        .help("ID of the cluster to delete")
+                        .required(true)
+                        .index(1),
+                ),
+        )
         .subcommand(SubCommand::with_name("list").about("List all clusters"))
         .get_matches();
-
 
     match matches.subcommand() {
         Some(("create", sub_matches)) => {
             let name = sub_matches.value_of("name").unwrap();
             let optimize = sub_matches.value_of("optimize").unwrap();
             println!("Creating cluster '{}' with {} purpose", name, optimize);
-            let _output = create_cluster(name, optimize).unwrap();
+            create_cluster(name, optimize).unwrap();
             println!("Cluster created");
-        },
+        }
 
         // write delete
         Some(("delete", sub_matches)) => {
@@ -126,7 +122,6 @@ fn main() {
             let output = String::from_utf8_lossy(&_output.stdout);
             println!("{}", output);
         }
-
 
         // write list
         Some(("list", _sub_matches)) => {
