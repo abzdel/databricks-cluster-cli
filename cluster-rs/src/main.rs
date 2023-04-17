@@ -1,9 +1,22 @@
 use clap::{App, Arg, SubCommand};
 
+fn get_size(size: &str) -> &str {
+    /*Takes desired purpose of cluster (string) and returns type of cluster we will use string.
+    String returned is the name of the compute resource we want to use.
+    Hardcoded into four sections for now.*/
+    match size {
+        "general" => "Standard_D96ds_v5",
+        "memory" => "Standard_E96ds_v5",
+        "storage" => "Standard_L80as_v3",
+        "compute" => "Standard_F72s_v2",
+        _ => "Standard_D96ds_v5", // default to general
+    }
+}
+
 fn main() {
     let matches = App::new("Cluster Management Tool")
         .version("1.0")
-        .author("Your Name <your.name@example.com>")
+        .author("Alex Bzdel")
         .about("Manage clusters")
         .subcommand(
             SubCommand::with_name("create")
@@ -11,12 +24,17 @@ fn main() {
                 .arg(
                     Arg::with_name("name")
                         .help("Name of the new cluster")
+                        .short('n')
                         .required(true),
+
                 )
                 .arg(
-                    Arg::with_name("size")
-                        .help("Size of the new cluster")
-                        .required(true),
+                    Arg::with_name("optimize")
+                        .help("Optimize for a specific purpose")
+                        .short('o')
+                        .required(false)
+                        .default_value("general"),
+
                 ),
         )
         .subcommand(SubCommand::with_name("edit").about("Edit an existing cluster"))
