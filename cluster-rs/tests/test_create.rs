@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
+    use assert_cmd::cargo::CommandCargoExt;
     use std::process::Command;
     use tempfile::TempDir;
-    use assert_cmd::cargo::CommandCargoExt;
 
     #[test]
     fn test_create_cluster_only_required_args() -> Result<(), Box<dyn std::error::Error>> {
@@ -75,7 +75,6 @@ mod tests {
             .output()?;
         assert!(output.status.success());
         Ok(())
-
     }
     #[test]
     fn test_create_cluster_with_invalid_optimization() -> Result<(), Box<dyn std::error::Error>> {
@@ -117,5 +116,4 @@ mod tests {
         assert!(!output.status.success());
         Ok(())
     }
-    
-    }
+}

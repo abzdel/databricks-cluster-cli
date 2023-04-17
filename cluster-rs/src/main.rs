@@ -80,7 +80,7 @@ fn main() {
                         .takes_value(true)
                         .long("--name")
                         .short('n')
-                        .help("Name of the new cluster")
+                        .help("Name of the new cluster"),
                 )
                 .arg(
                     Arg::with_name("optimize")
@@ -89,7 +89,7 @@ fn main() {
                         .long("--optimize")
                         .help("Optimize for a specific purpose")
                         .short('o')
-                        .default_value("general")
+                        .default_value("general"),
                 ),
         )
         .subcommand(
@@ -101,7 +101,7 @@ fn main() {
                         .required(true)
                         .takes_value(true)
                         .long("--cluster")
-                        .short('c')
+                        .short('c'),
                 ),
         )
         .subcommand(SubCommand::with_name("list").about("List all clusters"))

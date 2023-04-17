@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # Get all cluster IDs
-cluster_ids=$(databricks clusters list | awk '{if(NR>1) print $1}')
-
-echo "Deleting all clusters used for test cases"
+cluster_ids=$(databricks clusters list --output JSON | jq -r '.clusters[].cluster_id')
 
 # Loop through each cluster ID and delete it
 for id in $cluster_ids
