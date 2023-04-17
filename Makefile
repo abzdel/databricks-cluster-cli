@@ -1,5 +1,7 @@
-install-azure:
+install:
 	curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+	pip install --upgrade pip &&\
+		pip install -r requirements.txt
 
 compile:
 	cd cluster-rs && cargo build --release
