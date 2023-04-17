@@ -8,7 +8,7 @@ use serde::{Serialize};
 struct Cluster {
     cluster_name: String,
     spark_version: String,
-    node_type: String,
+    node_type_id: String,
     spark_conf: serde_json::Value,
     num_workers: u32,
 }
@@ -28,14 +28,14 @@ fn get_node_type(purpose: &str) -> &str {
 
 // make sure create_cluster returns Restul or Option to accept ?
 fn create_cluster(name: &str, purpose: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let node_type = get_node_type(purpose);
-    println!("Creating cluster '{}' with size {}", name, node_type);
+    let node_type_id = get_node_type(purpose);
+    println!("Creating cluster '{}' with purpose {}", name, node_type_id);
 
     // create json file with cluster info
     let cluster = Cluster {
         cluster_name: String::from(name),
         spark_version: String::from("7.3.x-scala2.12"),
-        node_type: String::from(node_type),
+        node_type_id: String::from(node_type_id),
         spark_conf: serde_json::json!({
             "spark.speculation": true
         }),
@@ -44,7 +44,7 @@ fn create_cluster(name: &str, purpose: &str) -> Result<(), Box<dyn std::error::E
 
     let json = serde_json::to_string_pretty(&cluster)?;
 
-    let mut file = File::create("utils/cluster.json")?;
+    let mut file = File::create("cluster.json")?;
     file.write_all(json.as_bytes())?;
 
     // run command line to create cluster
@@ -52,9 +52,12 @@ fn create_cluster(name: &str, purpose: &str) -> Result<(), Box<dyn std::error::E
         .arg("clusters")
         .arg("create")
         .arg("--json-file")
-        .arg("utils/cluster.json")
+        .arg("cluster.json")
         .output()
         .expect("failed to execute process");
+
+    // delete json
+    //std::fs::remove_file("cluster.json")?;
 
     Ok(())
 }
@@ -78,6 +81,7 @@ fn main() {
                 .arg(
                     Arg::with_name("optimize")
                         .help("Optimize for a specific purpose")
+                        .short('o')
                         .required(false)
                         .default_value("general")
                         .index(2),
@@ -97,14 +101,22 @@ fn main() {
         .subcommand(SubCommand::with_name("list").about("List all clusters"))
         .get_matches();
 
+
     match matches.subcommand() {
         Some(("create", sub_matches)) => {
             let name = sub_matches.value_of("name").unwrap();
-            let _output = create_cluster(name, sub_matches.value_of("optimize").unwrap());
-            println!("Cluster created!");
+            let optimize = sub_matches.value_of("optimize").unwrap();
+            println!("Creating cluster '{}' with {} purpose", name, optimize);
+            let output = create_cluster(name, optimize).unwrap();
+            println!("Cluster created");
+        },
+        _ => {
+            println!("No subcommand specified");
         }
-        Some(("delete", sub_matches)) => {
-            let cluster_id = sub_matches.value_of("cluster").unwrap();
+
+        Some(("delete", _)) => {
+            let delete_matches = matches.subcommand_matches("delete").unwrap();
+            let cluster_id = delete_matches.value_of("cluster").unwrap();
             println!("Deleting cluster {}", cluster_id);
             let _output = Command::new("databricks")
                 .arg("clusters")
