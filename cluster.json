@@ -1,5 +1,5 @@
 {
-  "cluster_name": "temp-cluster",
+  "cluster_name": "my-cluster-2",
   "spark_version": "7.3.x-scala2.12",
   "node_type_id": "Standard_D96ds_v5",
   "spark_conf": {

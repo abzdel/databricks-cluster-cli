@@ -107,30 +107,30 @@ fn main() {
             let name = sub_matches.value_of("name").unwrap();
             let optimize = sub_matches.value_of("optimize").unwrap();
             println!("Creating cluster '{}' with {} purpose", name, optimize);
-            let output = create_cluster(name, optimize).unwrap();
+            let _output = create_cluster(name, optimize).unwrap();
             println!("Cluster created");
         },
-        _ => {
-            println!("No subcommand specified");
-        }
 
-        Some(("delete", _)) => {
-            let delete_matches = matches.subcommand_matches("delete").unwrap();
-            let cluster_id = delete_matches.value_of("cluster").unwrap();
-            println!("Deleting cluster {}", cluster_id);
+        // write delete
+        Some(("delete", sub_matches)) => {
+            let cluster = sub_matches.value_of("cluster").unwrap();
+            println!("Deleting cluster '{}'", cluster);
             let _output = Command::new("databricks")
                 .arg("clusters")
                 .arg("delete")
                 .arg("--cluster-id")
-                .arg(cluster_id)
+                .arg(cluster)
                 .output()
                 .expect("failed to execute process");
-    }
+
+            let output = String::from_utf8_lossy(&_output.stdout);
+            println!("{}", output);
+        }
 
 
-        Some(("list", _)) =>  {
-            
-            println!("Listing clusters...");
+        // write list
+        Some(("list", _sub_matches)) => {
+            println!("Listing clusters");
             let _output = Command::new("databricks")
                 .arg("clusters")
                 .arg("list")
@@ -139,7 +139,6 @@ fn main() {
 
             let output = String::from_utf8_lossy(&_output.stdout);
             println!("{}", output);
-
         }
         None => println!("No subcommand specified."),
         _ => unreachable!(),
