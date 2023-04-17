@@ -84,14 +84,15 @@ fn main() {
 
                 ),
         )
-        .subcommand(SubCommand::with_name("delete")
-        .about("Delete an existing cluster")
-        .arg(
-            Arg::with_name("cluster-id")
-                .help("ID of the cluster to delete")
-                .required(true)
-                .index(1),
-        )
+        .subcommand(
+            SubCommand::with_name("delete")
+            .about("Delete an existing cluster")
+            .arg(
+                Arg::with_name("cluster")
+                    .help("ID of the cluster to delete")
+                    .required(true)
+                    .index(1),
+            )
     )
         .subcommand(SubCommand::with_name("list").about("List all clusters"))
         .get_matches();
@@ -102,9 +103,9 @@ fn main() {
             let _output = create_cluster(name, sub_matches.value_of("optimize").unwrap());
             println!("Cluster created!");
         }
-        Some(("delete", _)) => { println!("Deleting cluster...");
-            let cluster_id = matches.value_of("cluster-id").unwrap();
-            println!("Deleting cluster {}...", cluster_id);
+        Some(("delete", sub_matches)) => {
+            let cluster_id = sub_matches.value_of("cluster").unwrap();
+            println!("Deleting cluster {}", cluster_id);
             let _output = Command::new("databricks")
                 .arg("clusters")
                 .arg("delete")
@@ -112,7 +113,6 @@ fn main() {
                 .arg(cluster_id)
                 .output()
                 .expect("failed to execute process");
-
     }
 
 
