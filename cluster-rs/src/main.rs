@@ -44,7 +44,7 @@ fn create_cluster(name: &str, purpose: &str) -> Result<(), Box<dyn std::error::E
 
     let json = serde_json::to_string_pretty(&cluster)?;
 
-    let mut file = File::create("cluster.json")?;
+    let mut file = File::create("utils/cluster.json")?;
     file.write_all(json.as_bytes())?;
 
     // run command line to create cluster
@@ -52,7 +52,7 @@ fn create_cluster(name: &str, purpose: &str) -> Result<(), Box<dyn std::error::E
         .arg("clusters")
         .arg("create")
         .arg("--json-file")
-        .arg("cluster.json")
+        .arg("utils/cluster.json")
         .output()
         .expect("failed to execute process");
 
@@ -84,8 +84,16 @@ fn main() {
 
                 ),
         )
-        .subcommand(SubCommand::with_name("edit").about("Edit an existing cluster"))
-        .subcommand(SubCommand::with_name("delete").about("Delete an existing cluster"))
+        .subcommand(SubCommand::with_name("delete")
+        .about("Delete an existing cluster")
+        .arg(
+            Arg::with_name("cluster-id")
+                .help("ID of the cluster to delete")
+                .required(true)
+                .index(1),
+        )
+    )
+        .subcommand(SubCommand::with_name("list").about("List all clusters"))
         .get_matches();
 
     match matches.subcommand() {
@@ -94,8 +102,33 @@ fn main() {
             let _output = create_cluster(name, sub_matches.value_of("optimize").unwrap());
             println!("Cluster created!");
         }
-        Some(("edit", _)) => println!("Editing cluster..."),
-        Some(("delete", _)) => println!("Deleting cluster..."),
+        Some(("delete", _)) => { println!("Deleting cluster...");
+            let cluster_id = matches.value_of("cluster-id").unwrap();
+            println!("Deleting cluster {}...", cluster_id);
+            let _output = Command::new("databricks")
+                .arg("clusters")
+                .arg("delete")
+                .arg("--cluster-id")
+                .arg(cluster_id)
+                .output()
+                .expect("failed to execute process");
+
+    }
+
+
+        Some(("list", _)) =>  {
+            
+            println!("Listing clusters...");
+            let _output = Command::new("databricks")
+                .arg("clusters")
+                .arg("list")
+                .output()
+                .expect("failed to execute process");
+
+            let output = String::from_utf8_lossy(&_output.stdout);
+            println!("{}", output);
+
+        }
         None => println!("No subcommand specified."),
         _ => unreachable!(),
     }
