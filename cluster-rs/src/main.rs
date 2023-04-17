@@ -18,11 +18,11 @@ fn get_node_type(purpose: &str) -> &str {
     String returned is the name of the compute resource we want to use.
     Hardcoded into four sections for now.*/
     match purpose {
-        "general" => "Standard_D96ds_v5",
-        "memory" => "Standard_E96ds_v5",
-        "storage" => "Standard_L80as_v3",
-        "compute" => "Standard_F72s_v2",
-        _ => "Standard_D96ds_v5", // default to general
+        "general" => "Standard_DS3_v2",
+        "memory" => "Standard_DS12_v2",
+        "storage" => "Standard_L8s_v2",
+        "compute" => "Standard_F4",
+        _ => "Standard_DS3_v2", // default to general
     }
 }
 
@@ -117,7 +117,7 @@ fn main() {
             println!("Deleting cluster '{}'", cluster);
             let _output = Command::new("databricks")
                 .arg("clusters")
-                .arg("delete")
+                .arg("permanent-delete")
                 .arg("--cluster-id")
                 .arg(cluster)
                 .output()

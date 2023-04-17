@@ -5,3 +5,6 @@
 3. authenticate to azure (az login)
 4. authenticate to databricks (databricks configure (--token?)")
 4.5. get token by going to databricks workspace - user settings - access tokens - generate new token
+5. make all
+6. use tool
+./cluster create <your-cluster-name> <(OPTIONAL) desired-optimization>
