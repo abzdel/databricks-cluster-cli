@@ -1,3 +1,5 @@
+[![Makefile CI](https://github.com/nogibjj/databricks-cluster-cli/actions/workflows/makefile.yml/badge.svg)](https://github.com/nogibjj/databricks-cluster-cli/actions/workflows/makefile.yml)
+
 # recreating steps
 
 1. Set up Azure Databricks workspace (picture coming soon to a github repo near you)
