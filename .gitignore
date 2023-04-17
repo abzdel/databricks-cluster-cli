@@ -11,3 +11,6 @@ Cargo.lock
 
 # cluster-rs target files
 cluster-rs/target/
+
+# cluster ids files in tests foler
+cluster-rs/tests/cluster_ids
