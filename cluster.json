@@ -1,0 +1,9 @@
+{
+  "cluster_name": "temp",
+  "spark_version": "7.3.x-scala2.12",
+  "node_type": "Standard_D96ds_v5",
+  "spark_conf": {
+    "spark.speculation": true
+  },
+  "num_workers": 25
+}
