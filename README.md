@@ -5,7 +5,8 @@
 This is a command-line interface tool built in Rust and Bash that allows you to provision custom clusters in Databricks using the Databricks REST API.
 
 # Architectural Diagram
-coming soon to a github repo near you!
+![project4 drawio](https://user-images.githubusercontent.com/55398496/232909802-8535c89f-d9cd-4fbc-824e-4ab1defdaf25.png)
+
 
 # Setup
 
